@@ -118,28 +118,35 @@
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="dist/jplayer/jquery.jplayer.min.js"></script>
     <script type="text/javascript">
+        function checkConnection() {
+            var networkState = navigator.connection.type;
 
-        $(document).ready(function(){
-            function checkConnection() {
-                var networkState = navigator.connection.type;
+            var states = {};
+            states[Connection.UNKNOWN]  = 'Unknown connection';
+            states[Connection.ETHERNET] = 'Ethernet connection';
+            states[Connection.WIFI]     = 'WiFi connection';
+            states[Connection.CELL_2G]  = 'Cell 2G connection';
+            states[Connection.CELL_3G]  = 'Cell 3G connection';
+            states[Connection.CELL_4G]  = 'Cell 4G connection';
+            states[Connection.CELL]     = 'Cell generic connection';
+            states[Connection.NONE]     = 'No network connection';
 
-                var states = {};
-                states[Connection.UNKNOWN]  = 'Unknown connection';
-                states[Connection.ETHERNET] = 'Ethernet connection';
-                states[Connection.WIFI]     = 'WiFi connection';
-                states[Connection.CELL_2G]  = 'Cell 2G connection';
-                states[Connection.CELL_3G]  = 'Cell 3G connection';
-                states[Connection.CELL_4G]  = 'Cell 4G connection';
-                states[Connection.CELL]     = 'Cell generic connection';
-                states[Connection.NONE]     = 'No network connection';
-
-                console.log('Connection type: ' + states[networkState]);
-            }
-        
+            console.log('Connection type: ' + states[networkState]);
+        }
+        document.addEventListener("deviceready", onDeviceReady, false);
+        function onDeviceReady() {
+            console.log("///////////console.log works well////////////////////");
             checkConnection();
+
+
             var stream = {
                     title: "Radyo X",
-                    mp3: "http://yayin.netradyom.com:8850/RADYOX"
+                    mp3: "http://yayin.netradyom.com:8050/8",
+                    m4a: "http://yayin.netradyom.com:8050/8",
+                    webma: "http://yayin.netradyom.com:8050/8",
+                    oga: "http://yayin.netradyom.com:8050/8",
+                    aac:"http://yayin.netradyom.com:8050/8",
+
                 },
                 ready = true;
 
@@ -147,26 +154,54 @@
                 ready: function (event) {
                     ready = true;
                     $(this).jPlayer("setMedia", stream);
+                    console.log("/////////////////////////////////////////player ready");
                 },
                 pause: function() {
                     $(this).jPlayer("clearMedia");
+                    console.log("/////////////////////////////////////////player paused");
                 },
                 error: function(event) {
                     if(ready && event.jPlayer.error.type === $.jPlayer.error.URL_NOT_SET) {
                         // Setup the media stream again and play it.
                         $(this).jPlayer("setMedia", stream).jPlayer("play");
+
+                    }else if(ready && event.jPlayer.error.type === $.jPlayer.error.NO_SUPPORT){
+                        console.log("/////////////////////////////////////////no support");
                     }
+                    else if(ready && event.jPlayer.error.type === $.jPlayer.error.FLASH){
+                        console.log("/////////////////////////////////////////FLASH ");
+                    }
+                    else if(ready && event.jPlayer.error.type === $.jPlayer.error.FLASH_DISABLED){
+                        console.log("/////////////////////////////////////////FLASH_DISABLED ");
+                    }
+                    else if(ready && event.jPlayer.error.type === $.jPlayer.error.NO_SOLUTION){
+                        console.log("/////////////////////////////////////////NO_SOLUTION ");
+                    }
+                    else if(ready && event.jPlayer.error.type === $.jPlayer.error.URL){
+                        console.log("/////////////////////////////////////////URL ");
+                    }else if(ready && event.jPlayer.error.type === $.jPlayer.error.VERSION){
+                        console.log("///////////////////////////////////////// VERSION");
+                    }
+
+
                 },
                 swfPath: "dist/jplayer",
-                supplied: "mp3",
+                supplied: "mp3,m4a,oga,webma",
                 preload: "none",
                 wmode: "window",
                 useStateClassSkin: true,
+                playlistOptions: {
+                    autoPlay: true,
+
+                },
                 autoBlur: false,
                 keyEnabled: true
             });
 
-        });
+
+
+        }
+
 
     </script>
 
